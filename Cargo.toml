@@ -1,0 +1,12 @@
+[package]
+name = "calendario-rommies"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+getopts = "0.2.21"
+chrono = "0.4.19"
+prettytable-rs = "0.8.0"
+rustbreak = "2.0.0"
