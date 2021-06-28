@@ -9,4 +9,6 @@ edition = "2018"
 getopts = "0.2.21"
 chrono = "0.4.19"
 prettytable-rs = "0.8.0"
-rustbreak = "2.0.0"
+rustbreak = { version = "2.0.0", features = ["yaml_enc"] }
+serde = { version = "1.0.126", features = ["derive"] }
+serde_json = "1.0.59"

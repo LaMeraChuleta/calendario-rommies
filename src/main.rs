@@ -1,16 +1,15 @@
-mod calendario;
 use getopts::{self, Options, Occur, HasArg};
 use std::env;
+mod rommies;
+use rommies::calendario;
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} FILE [options]", program);
     println!("{}", opts.usage(&brief));
 }
-fn main() {    
-
+fn main() {            
     let args: Vec<String> = env::args().collect();
-    let program  = args[0].clone();
-    
+    let program  = args[0].clone();    
     //Declaracion de opciones
     let mut opts = Options::new();
     opts.optflag("a", "ayuda", "lista de opciones de la interfaz");
@@ -22,18 +21,16 @@ fn main() {
 
     if matches.opt_present("a") {
         print_usage(&program, opts);        
-        return;
+        return
     } 
     if matches.opt_present("c") {        
         match matches.opt_str("c") {
             Some(param) => {
-                match calendario::parse_name_month_to_number(&param){
-                    Some(date) => calendario::create_calendar_month(Some(date)),
-                    None => return
+                if let Some(date) = calendario::parse_name_month_to_number(&param){
+                    calendario::create_calendar_month(Some(date))                    
                 }
             }
             None => calendario::create_calendar_month(None)
-        }
-        return;
+        }        
     }
 }
