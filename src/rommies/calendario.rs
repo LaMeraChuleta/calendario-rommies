@@ -11,7 +11,7 @@ const WEEKDAY_SPANISH: [&str; 7] = [
     "DOMINGO"
 ];
 
-pub fn create_calendar_month(date_for_calendar: Option<NaiveDate>){    
+pub fn create_calendar_month(date_for_calendar: NaiveDate){    
 
     use super::actividades::insert_activity_calendar;
     insert_activity_calendar();        
@@ -34,20 +34,11 @@ fn create_header_calendar(table_activity: &mut Table) {
     table_activity.add_row(Row::new(cells_weekday));
 }
 
-fn create_body_calendar(table_activity: &mut Table, date_for_calendar: Option<NaiveDate>){
-              
-    //actividades::hello();
+fn create_body_calendar(table_activity: &mut Table, date_for_calendar: NaiveDate){
+                
+    let count_days = count_days_in_month(date_for_calendar);
 
-    let day_now = match date_for_calendar {
-        Some(date) =>  date,
-        None => {
-            let now = Local::now();
-            NaiveDate::from_ymd(now.year(), now.month(), now.day())
-        }
-    };    
-    let count_days = count_days_in_month(day_now);
-
-    let _index_weekday = index_weekday(day_now);
+    let _index_weekday = index_weekday(date_for_calendar);
 
     let mut cells_weekday: Vec<Cell> = vec![];    
     
@@ -56,17 +47,18 @@ fn create_body_calendar(table_activity: &mut Table, date_for_calendar: Option<Na
         if day == 1 {            
             for _ in 1.._index_weekday {
                 cells_weekday.push(Cell::new(""));
-            }   
-            cells_weekday.push(Cell::new(day.to_string().as_str()));         
+            }               
+            //cells_weekday.push(Cell::new(day.to_string().as_str()));         
         }
-        else if cells_weekday.len() < 7 {
-            cells_weekday.push(Cell::new(day.to_string().as_str()));                       
-        }
-        else {                
+        // else if cells_weekday.len() < 7 {
+        //     //cells_weekday.push(Cell::new(day.to_string().as_str()));                       
+        // }
+        if cells_weekday.len() >= 7 {                
             table_activity.add_row(Row::new(cells_weekday.clone()));
             cells_weekday.clear();
-            cells_weekday.push(Cell::new(day.to_string().as_str()));
+            //cells_weekday.push(Cell::new(day.to_string().as_str()));
         }               
+        cells_weekday.push(Cell::new(day.to_string().as_str()));
     }
 
     for _ in 1..(7 - cells_weekday.len()){
@@ -75,7 +67,7 @@ fn create_body_calendar(table_activity: &mut Table, date_for_calendar: Option<Na
     table_activity.add_row(Row::new(cells_weekday));
 }
 
-pub fn parse_name_month_to_number(month_name: &str) -> Option<NaiveDate>{
+pub fn parse_name_month_to_date(month_name: &str) -> NaiveDate {
 
     let number_month: i32 = match month_name {
         "ene" => 1,
@@ -93,11 +85,13 @@ pub fn parse_name_month_to_number(month_name: &str) -> Option<NaiveDate>{
         _ => -1
     };
 
-    if number_month.is_positive() {
-        let day_now = Local::now();        
-        return Some(NaiveDate::from_ymd(day_now.year(),number_month as u32, 1));
-    }
-    None    
+    let now = Local::now();
+
+    if number_month.is_positive() {        
+        NaiveDate::from_ymd(now.year(),number_month as u32, 1)
+    } else {        
+        NaiveDate::from_ymd(now.year(), now.month(),1)
+    }        
 }
 
 fn index_weekday(date: NaiveDate) -> i32{
